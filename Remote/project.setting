@@ -1,0 +1,77 @@
+# ==============================================================================
+# add all .s and .c files
+# ==============================================================================
+#----- MISC LIB -----#
+csSRC    += mtd.c
+csSRC    += g726_enc_32.c
+csSRC    += g72x.c
+csSRC    += ima_enc.c
+ccFLAG  := -mno-fp-as-gp -g -W -O3
+#----- APP -----#
+cSRC	  += main.c
+cSRC      += remote.c
+cSRC      += remote_button.c
+cSRC      += remote_mouse.c
+cSRC      += remote_microphone.c
+cSRC      += remote_gatt.c
+cSRC      += remote_adv.c
+cSRC      += remote_led.c
+cSRC      += remote_gpio.c
+cSRC      += remote_vcmd.c
+#cSRC      += ir_NEC.c
+# ==============================================================================
+# add include search paths
+# ==============================================================================
+
+#===============================================================================
+# add external library and objects
+#===============================================================================
+#----- AML -----#
+LIB +=  components/Libraries/external/AML/libAML.a
+#----- OPUS ----#
+LIB +=  components/Libraries/external/opus/libopus.a
+
+LIB +=  components/Libraries/external/algo/libalg.a
+
+# ==============================================================================
+# output name
+# ==============================================================================
+IMG       := remote.out
+# ==============================================================================
+# link scriptor
+# ==============================================================================
+SCR       := N705_FLASH.lcf
+SCR_256K  := N705_FLASH_256.lcf
+# ==============================================================================
+# map files
+# ==============================================================================
+MAP		:= remote.map
+# ==============================================================================
+# binary name
+# ==============================================================================
+BIN       := remote.bin
+# ==============================================================================
+# de-assembled name
+# ==============================================================================
+ASM       := remote.asm
+
+VER       := 
+#DEFINE    += POWER_MODE_LDO
+#DEFINE    += POWER_MODE_BUCK
+
+#### Boot code Version ##########
+#DEFINE    += BOOT_CODE_104
+
+#### Chip Define ################
+#DEFINE    += CHIP_AB1600
+#DEFINE    += CHIP_AB1601
+#DEFINE    += CHIP_AB1603
+
+#### Remote Specfic Define ######
+#DEFINE    += CODEC_OPUS_ONLY
+
+#DEFINE    += DEMO_EVK_DTB
+#DEFINE    += DEMO_TV_BOX
+
+
+

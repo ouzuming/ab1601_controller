@@ -1,0 +1,168 @@
+/* ===========================================================================
+ *
+ * Reference Linker Command File for N705 device
+ *
+ * Copyright@ 2013 Airoha.  All right reserved.
+ * File Description:
+ *   The reference linker command file for the Andes.  Applications
+ *   may use unmodified, or copy this to an application directory to
+ *   modify as needed.
+ *
+ * =========================================================================== */
+INCLUDE "symtabBOOT.txt"
+
+ENTRY(P:0x0000)
+
+MEMORY {
+    FLASH_DATA_MP (RX)      :   ORIGIN = 0x81000,  LENGTH = 0x1000
+    FLASH_DATA   (RX)       :   ORIGIN = 0x82000,  LENGTH = 0xE000
+    FLASH_TEXT   (RX)       :   ORIGIN = 0x90000,  LENGTH = 0x38000
+    DRAM (!RX)               :   ORIGIN = 0x100000, LENGTH = 0x8000
+}
+
+SECTIONS {
+   
+    /* ========== FLASH DATA SECTION ========== */
+    .mp_sector 0x81000 :
+    {
+        KEEP(*(.mp_sector));
+    } > FLASH_DATA_MP
+    
+    .cfg_sector 0x82000 :
+    {
+        KEEP(*(.cfg_sector));
+    } > FLASH_DATA
+
+    .sm_sector 0x83000 : 
+    {
+        KEEP(*(.sm_sector));
+    } > FLASH_DATA
+    
+    .dfu_sector 0x84000 :
+    {
+        KEEP(*(.dfu_sector));
+    } > FLASH_DATA
+
+    .ap_sectors :                     /*need to align using __attribute__ in each decalare structure*/
+    {
+        KEEP(*(.ap_sector));
+    } > FLASH_DATA
+    
+    
+    __FLASH_DATA_START = ADDR(.mp_sector);
+    __MP_SECTOR_ADDR  = ADDR(.mp_sector);
+    __MP_SECTOR_LEN   = SIZEOF(.mp_sector);
+    __DIS_SECTOR_ADDR  = ADDR(.cfg_sector);
+    __DIS_SECTOR_LEN   = SIZEOF(.cfg_sector);
+    __SM_SECTOR_ADDR  = ADDR(.sm_sector);
+    __SM_SECTOR_LEN   = SIZEOF(.sm_sector);
+    __DFU_SECTOR_ADDR  = ADDR(.dfu_sector);
+    __DFU_SECTOR_LEN   = SIZEOF(.dfu_sector);
+    __AP_SECTOR_ADDR  = ADDR(.ap_sectors);
+    __AP_SECTOR_LEN   = SIZEOF(.ap_sectors);
+
+    __FLASH_DATA_END  = ADDR(.ap_sectors) + SIZEOF(.ap_sectors);
+
+    /* ========== TEXT SECTION ========== */
+    .run_time :
+	{
+	    KEEP(*(.dfu_mark));
+	    KEEP(*(.module_start));
+		KEEP(*(.module));
+	    KEEP(*(.module_end));		
+	} > FLASH_TEXT
+
+    .text :
+    {
+        *(.text);
+        *(.text.*);
+        *(.ex9.itable);
+    } > FLASH_TEXT
+
+    .rodata :
+    {
+        *(.rodata);
+        *(.rodata.*);
+        text_end = .;
+		} > FLASH_TEXT
+    
+    . = ORIGIN(DRAM);
+    
+    /* ========= BASE INFORMATION ======== */
+    _SDA_BASE_ = .;
+    
+    /* ========  ROM DATA SECTION ========*/
+    _BOOT_DATA_LEN   = _memory_top_BOOT - ORIGIN(DRAM);
+
+    .bootData :
+    {
+        . = _BOOT_DATA_LEN;
+    } > DRAM
+    
+    /* ========== DATA SECTION ========== */
+    
+    .data :
+    {
+        *ab1600_system.o(.data);
+        *ab1600_system.o(.data.*)
+        *ab1600_system.o(.sdata_w);
+        *ab1600_system.o(.sdata_h);
+        *ab1600_system.o(.sdata_b);
+        *ab1600_system.o(COMMON);
+        *ab1600_system.o(.bss);
+        *ab1600_system.o(.dwbss);
+        *ab1600_system.o(.bss.*);
+        *ab1600_system.o(.scommon_w);
+        *ab1600_system.o(.scommon_h);
+        *ab1600_system.o(.scommon_b);
+        
+        *(.data);
+        *(.data.*)
+        *(.sdata_w);
+        *(.sdata_h);
+        *(.sdata_b);
+		FILL(0xff);
+		. = ALIGN(4);
+    } > DRAM AT > FLASH_TEXT
+
+	_DFU_AREA_SIZE = text_end - ORIGIN(FLASH_TEXT) + SIZEOF(.data);
+	
+    
+    /* ========== BSS SECTION ========== */
+    .bss :
+    {
+
+        *(COMMON);
+        *(.bss);
+        *(.dwbss);
+        *(.bss.*);
+        *(.scommon_w);
+        *(.scommon_h);
+        *(.scommon_b);
+    } > DRAM
+    
+    
+    /* ========== malloc SECTION ========== */
+    _end = .;
+
+    /* ========== STACK SECTION ========== */
+    __SYS_STACK_START = ORIGIN(DRAM) + LENGTH(DRAM)- 256;    
+    _stack = __SYS_STACK_START;
+
+    __DATA_SEC_LMA  = LOADADDR(.data);
+    __DATA_SEC_VMA  = ADDR(.data);
+    __DATA_SEC_LEN  = SIZEOF(.data);
+    __BSS_SEC_START = ADDR(.bss);
+    __BSS_SEC_LEN   = SIZEOF(.bss);
+/*
+    __SYMBOL_ROM_DATA_LMA  = __ROM_DATA_LMA;
+    __SYMBOL_ROM_DATA_VMA  = __ROM_DATA_VMA;
+    __SYMBOL_ROM_DATA_LEN  = __ROM_DATA_LEN;
+    __SYMBOL_ROM_BSS_START = __ROM_BSS_START;
+    __SYMBOL_ROM_BSS_LEN   = __ROM_BSS_LEN;
+*/    
+}
+    INCLUDE "AB1600.lcf"
+    INCLUDE "AB1600_newSFR.lcf"
+    
+    

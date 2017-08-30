@@ -1,0 +1,39 @@
+# ==============================================================================
+# add all .s and .c files
+# CSRC: C source (need path relative to makefile's)
+# SSRC: S source (need path relative to makefile's)
+# cSRC: C source (filename only, makefile will search components/ directory)
+# sSRC: S source (filename only, makefile will search components/ directory)
+# ==============================================================================
+#----- Application -----#
+cSRC	  += main.c
+# ==============================================================================
+# add include search paths
+# INC: Only the non-source part need.(the directories of sources file will be
+#      added in INC automatically makefile)
+# ==============================================================================
+# ==============================================================================
+# output name
+# ==============================================================================
+IMG       := hello_world.out
+# ==============================================================================
+# link scriptor
+# SCR: filename only, makefile will search project directory first. If not found,
+#      it will search directory which makefile located.
+# ==============================================================================
+SCR       := N705_FLASH.lcf
+# ==============================================================================
+# map files
+# ==============================================================================
+MAP		:= hello_world.map
+# ==============================================================================
+# binary name
+# ==============================================================================
+BIN       := hello_world.bin
+# ==============================================================================
+# de-assembled name
+# ==============================================================================
+ASM       := hello_world.asm
+
+
+

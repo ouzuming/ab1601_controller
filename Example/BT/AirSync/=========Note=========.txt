@@ -1,0 +1,41 @@
+*******************************************************
+AirSync Protocl must support Google portocol buffer.
+You can implement yourself, and you can reference from 
+http://iot.weixin.qq.com/wiki/document-download.html
+, and find MmBp_Embedded_1.0.4.zip.
+
+If you use MmBp_Embedded_1.0.4.zip for test, you must do three things.
+1. Put "protobuf" folder at \components\Libraries
+2. Modify epb_WristBand.c in protobuf to change declaration method.
+   Modify Variable i at line 127 and 144.
+   i. line 127
+    From
+        for (int i=0; i<request->step_data_count; i++) {
+    To
+        int i;
+        for (i=0; i<request->step_data_count; i++) {
+   ii. line 144
+    From
+        for (int i=0; i<request->step_data_count; i++) {
+    To
+        int i;
+        for (i=0; i<request->step_data_count; i++) {
+3. Add follow lines in your project.setting file
+    #----- PROTOBUF -----#
+    cSRC      += epb.c
+    cSRC      += epb_MmBp.c
+    cSRC      += epb_WristBand.c
+4. Uncomment Protocol_Buffer_Test that defined in airsync.h.
+*******************************************************
+
+
+AirSync supports different security level to establish connection.
+
+The most high security must support md5, crc32, AES to connect.
+The middle security level only use md5 to connect.
+The low cecurity level use mac address to establish connection.
+
+You can use following define to switch three level security, they are definded in airsync.h.
+#define Md5AndAesEncrypt
+#define MacNoEncrypt
+#define Md5AndNoEncypt
